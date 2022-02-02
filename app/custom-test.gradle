@@ -1,0 +1,23 @@
+gradle.rootProject {
+    List<String> allTestResults = new ArrayList<>()
+
+    test {
+        afterTest { TestDescriptor testDescriptor, TestResult testResult ->
+            def name = testDescriptor.displayName
+            def resultType = testResult.resultType
+            def duration = testResult.getEndTime() - testResult.getStartTime()
+
+            String result = "{" +
+                    "\"name\":\"${name}\"," +
+                    "\"result\":\"${resultType}\"," +
+                    "\"duration\": ${duration}" +
+                    "}"
+
+            allTestResults.add(result)
+        }
+    }
+
+    gradle.buildFinished {
+        logger.quiet allTestResults.toString()
+    }
+}
